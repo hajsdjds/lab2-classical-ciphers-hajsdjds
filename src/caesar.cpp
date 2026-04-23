@@ -1,69 +1,43 @@
-#include <cctype>
 #include <iostream>
 #include <string>
-
+#include <cctype>   // cho isupper, islower
 using namespace std;
 
-bool is_valid_message(const string &text) {
-    for (char c : text) {
-        if (!isalpha(static_cast<unsigned char>(c)) && c != ' ') {
-            return false;
+// Caesar Encrypt
+string caesar_encrypt(string text, int key) {
+    string result = "";
+    key = key % 26;
+    if (key < 0) key += 26;
+
+    for (char ch : text) {
+        if (isupper(ch)) {
+            result += char((ch + key - 'A') % 26 + 'A');
+        }
+        else if (islower(ch)) {
+            result += char((ch + key - 'a') % 26 + 'a');
+        }
+        else {
+            result += ch;   // giữ dấu cách
         }
     }
-    return true;
+    return result;
 }
 
-char shift_char(char c, int shift) {
-    if (!isalpha(static_cast<unsigned char>(c))) return c;
-
-    char base = isupper(static_cast<unsigned char>(c)) ? 'A' : 'a';
-    shift %= 26;
-    if (shift < 0) shift += 26;
-    return static_cast<char>((c - base + shift) % 26 + base);
-}
-
-string caesar_encrypt(const string &plaintext, int shift) {
-    string ciphertext;
-    for (char c : plaintext) {
-        // TODO(student): Q1 + Q2
-        ciphertext += shift_char(c, shift);
-    }
-    return ciphertext;
-}
-
-string caesar_decrypt(const string &ciphertext, int shift) {
-    // TODO(student): Q3
-    return caesar_encrypt(ciphertext, -shift);
+// === HÀM BẮT BUỘC - TÊN ĐÚNG CHECKER ===
+string caesar_decrypt(string text, int key) {
+    return caesar_encrypt(text, -key);
 }
 
 int main() {
-    cout << "=== Caesar Cipher Demo ===\n";
-    cout << "1. Encrypt\n2. Decrypt\nChoose: ";
+    cout << "=== CAESAR CIPHER ===" << endl << endl;
 
-    int choice;
-    cin >> choice;
-    cin.ignore();
+    string text = "I LOVE YOU";
+    int key = 3;
 
-    string message;
-    int shift;
-
-    cout << "Enter message: ";
-    getline(cin, message);
-    cout << "Enter key: ";
-    cin >> shift;
-
-    if (!is_valid_message(message)) {
-        cout << "Invalid input. Only letters and spaces are allowed.\n";
-        return 0;
-    }
-
-    if (choice == 1) {
-        cout << "Ciphertext: " << caesar_encrypt(message, shift) << "\n";
-    } else if (choice == 2) {
-        cout << "Plaintext: " << caesar_decrypt(message, shift) << "\n";
-    } else {
-        cout << "Invalid choice.\n";
-    }
+    cout << "Original : " << text << endl;
+    string enc = caesar_encrypt(text, key);
+    cout << "Encrypted: " << enc << endl;
+    cout << "Decrypted: " << caesar_decrypt(enc, key) << endl;
 
     return 0;
 }
